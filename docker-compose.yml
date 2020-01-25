@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  eureka-server:
+    image: eureka-server
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      - transfers-compose-network
+  user-service:
+    image: user-service
+    ports:
+      - "8011:8011"
+    restart: always
+    depends_on:
+      - eureka-server
+    networks:
+      - transfers-compose-network
+  car-service:
+    image: car-service
+    ports:
+      - "8012:8012"
+    restart: always
+    depends_on:
+      - eureka-server
+    networks:
+      - transfers-compose-network
+networks:
+  transfers-compose-network:
+
