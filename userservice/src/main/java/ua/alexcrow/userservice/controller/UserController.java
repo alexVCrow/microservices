@@ -9,8 +9,8 @@ import ua.alexcrow.userservice.dto.User;
 public class UserController {
 
     @GetMapping("/status/check")
-    public String status(){
-        return "User Service Success";
+    public ResponseEntity status(){
+        return ResponseEntity.ok(new User("test", "test"));
     }
 
     @PostMapping

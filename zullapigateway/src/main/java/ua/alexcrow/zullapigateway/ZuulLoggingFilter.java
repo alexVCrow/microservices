@@ -4,16 +4,21 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.stream.Collectors;
+import brave.Tracer;
 
 @Component
 public class ZuulLoggingFilter extends ZuulFilter{
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Autowired
+	private Tracer tracer;
 
 	@Override
 	public boolean shouldFilter() {
@@ -22,8 +27,8 @@ public class ZuulLoggingFilter extends ZuulFilter{
 
 	@Override
 	public Object run() {
+		RequestContext.getCurrentContext().addZuulRequestHeader("traceId", tracer.currentSpan().context().traceIdString());
 		HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
-		logger.info("request method -> {} request uri -> {} ", request.getMethod(), request.getRequestURI());
 		if ("POST".equalsIgnoreCase(request.getMethod())){
 			try {
 				String test = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
@@ -31,6 +36,8 @@ public class ZuulLoggingFilter extends ZuulFilter{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else {
+			logger.info("request method -> {} request uri -> {} ", request.getMethod(), request.getRequestURI());
 		}
 		return null;
 	}

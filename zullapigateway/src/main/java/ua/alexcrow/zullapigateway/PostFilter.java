@@ -1,10 +1,12 @@
 package ua.alexcrow.zullapigateway;
 
+import brave.Tracer;
 import com.google.common.io.CharStreams;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -14,6 +16,10 @@ import java.io.InputStreamReader;
 @Component
 public class PostFilter extends ZuulFilter {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private Tracer tracer;
+
     @Override
     public String filterType() {
         return "post";
@@ -31,14 +37,15 @@ public class PostFilter extends ZuulFilter {
 
     @Override
     public Object run() {
-        System.out.println("Inside Response Filter");
+        System.out.println(RequestContext.getCurrentContext().getZuulRequestHeaders());
         RequestContext ctx = RequestContext.getCurrentContext();
+        logger.info("response method -> {} response uri -> {} ", ctx.getRequest().getMethod(), ctx.getRequest().getRequestURI());
         try (final InputStream responseDataStream = ctx.getResponseDataStream()) {
             final String responseData = CharStreams.toString(new InputStreamReader(responseDataStream, "UTF-8"));
-            logger.warn("response -> {} ", responseData);
+            logger.info("response -> {} ", responseData);
             ctx.setResponseBody(responseData);
         } catch (IOException e) {
-            logger.warn("Error reading body",e);
+            logger.info("Error reading body",e);
         }
         return null;
     }

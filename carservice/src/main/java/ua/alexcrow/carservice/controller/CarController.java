@@ -1,6 +1,8 @@
 package ua.alexcrow.carservice.controller;
 
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +15,7 @@ public class CarController {
     private UsersServiceProxy usersServiceProxy;
 
     @GetMapping("/status")
-    public String status(){
-        return "Car Service Success" + usersServiceProxy.usersStatusCheck();
+    public ResponseEntity status(){
+        return ResponseEntity.ok(usersServiceProxy.usersStatusCheck().getBody());
     }
 }
