@@ -39,10 +39,11 @@ public class PostFilter extends ZuulFilter {
     public Object run() {
         System.out.println(RequestContext.getCurrentContext().getZuulRequestHeaders());
         RequestContext ctx = RequestContext.getCurrentContext();
-        logger.info("response method -> {} response uri -> {} ", ctx.getRequest().getMethod(), ctx.getRequest().getRequestURI());
+        System.out.println("============ " + ctx.getResponse().getStatus());
+        logger.info("response method -> {} response method -> {} response uri -> {} response -> {} ", ctx.getResponseStatusCode(), ctx.getRequest().getMethod(), ctx.getRequest().getRequestURI());
         try (final InputStream responseDataStream = ctx.getResponseDataStream()) {
             final String responseData = CharStreams.toString(new InputStreamReader(responseDataStream, "UTF-8"));
-            logger.info("response -> {} ", responseData);
+            logger.info("response method -> {} response method -> {} response uri -> {} response -> {} ", ctx.getResponseStatusCode(), ctx.getRequest().getMethod(), responseData);
             ctx.setResponseBody(responseData);
         } catch (IOException e) {
             logger.info("Error reading body",e);

@@ -16,6 +16,6 @@ public class CarController {
 
     @GetMapping("/status")
     public ResponseEntity status(){
-        return ResponseEntity.ok(usersServiceProxy.usersStatusCheck().getBody());
+        return ResponseEntity.status(500).body(usersServiceProxy.usersStatusCheck().getBody());
     }
 }
