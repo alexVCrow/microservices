@@ -10,7 +10,7 @@ public class UserController {
 
     @GetMapping("/status/check")
     public ResponseEntity status(){
-        return ResponseEntity.ok(new User("test", "test"));
+        return ResponseEntity.status(500).body(new User("test", "test"));
     }
 
     @PostMapping

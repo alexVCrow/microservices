@@ -27,8 +27,12 @@ public class ZuulLoggingFilter extends ZuulFilter{
 
 	@Override
 	public Object run() {
-		RequestContext.getCurrentContext().addZuulRequestHeader("traceId", tracer.currentSpan().context().traceIdString());
-		HttpServletRequest request = RequestContext.getCurrentContext().getRequest();
+		RequestContext rcc = RequestContext.getCurrentContext();
+		rcc.addZuulRequestHeader("traceId", tracer.currentSpan().context().traceIdString());
+		rcc.addZuulRequestHeader("spanId", tracer.currentSpan().context().spanIdString());
+		HttpServletRequest request = rcc.getRequest();
+		System.out.println(request.getHeader("embid"));
+		System.out.println(request.getHeader("session"));
 		if ("POST".equalsIgnoreCase(request.getMethod())){
 			try {
 				String test = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
